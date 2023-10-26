@@ -194,13 +194,17 @@ let errToOption = (r: resultexn<'a>): option<exn> =>
   | Error(e) => Some(e)
   }
 
+//Exectes the function f: 'a => 'b and catching and wrapping raised errors to Error(exn)
+@inline
 let catchExn = (f: unit => 'a): resultexn<'a> =>
   switch f() {
   | x => Ok(x)
   | exception e => Error(e)
   }
 
-let cetchResult = (f: unit => resultexn<'a>): resultexn<'a> =>
+//Exectes the function f: 'a => result<'b, exn> and catching and wrapping raised errors to Error(exn)
+@inline
+let catchResult = (f: unit => resultexn<'a>): resultexn<'a> =>
   switch f() {
   | x => x
   | exception e => Error(e)

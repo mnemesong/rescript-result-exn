@@ -7,4 +7,6 @@ o ResultExn.cmi : cp ..\bs\src\ResultExn.cmi
 o ResultExn.cmj : cp ..\bs\src\ResultExn.cmj
 o ResultExn.cmt : cp ..\bs\src\ResultExn.cmt
 o ResultExn.res : cp ..\..\src\ResultExn.res
+o ResultExn.resi : cp ..\..\src\ResultExn.resi
+o ResultExn.cmti : cp ..\bs\src\ResultExn.cmti
 build install.stamp : touch ResultExn.cmi ResultExn.cmj 

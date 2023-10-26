@@ -6,12 +6,18 @@ o src\ResultExn.ast : astj ..\..\src\ResultExn.res
 rule deps
   command = "D:\rescript-projects\rescript-result-exn\node_modules\rescript\win32\bsb_helper.exe" -hash 85e8d5fb58cf764569c9b3c06c9d081c $in
   restat = 1
-o src\ResultExn.d : deps src\ResultExn.ast
-rule mij
-  command = "D:\rescript-projects\rescript-result-exn\node_modules\rescript\win32\bsc.exe" -I src   -bs-package-name rescript-result-exn -bs-package-output commonjs:lib\js\$in_d:.bs.js -bs-v $g_finger $i
+o src\ResultExn.d : deps src\ResultExn.ast src\ResultExn.iast
+o src\ResultExn.iast : astj ..\..\src\ResultExn.resi
+rule mi
+  command = "D:\rescript-projects\rescript-result-exn\node_modules\rescript\win32\bsc.exe" -I src   -bs-v $g_finger $i
   dyndep = 1
   restat = 1
-o src\ResultExn.cmj src\ResultExn.cmi ..\js\src\ResultExn.bs.js : mij src\ResultExn.ast
+o src\ResultExn.cmi : mi src\ResultExn.iast
+rule mj
+  command = "D:\rescript-projects\rescript-result-exn\node_modules\rescript\win32\bsc.exe" -bs-read-cmi -I src   -bs-package-name rescript-result-exn -bs-package-output commonjs:lib\js\$in_d:.bs.js -bs-v $g_finger $i
+  dyndep = 1
+  restat = 1
+o src\ResultExn.cmj ..\js\src\ResultExn.bs.js : mj src\ResultExn.ast src\ResultExn.cmi
 o test\ResultExnTest.ast : astj ..\..\test\ResultExnTest.res
 rule deps_dev
   command = "D:\rescript-projects\rescript-result-exn\node_modules\rescript\win32\bsb_helper.exe" -g -hash 85e8d5fb58cf764569c9b3c06c9d081c $in

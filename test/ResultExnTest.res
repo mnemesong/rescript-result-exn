@@ -321,4 +321,56 @@ describe("test ResultExn", () => {
       },
     )
   })
+
+  describe("test catchExn", () => {
+    it(
+      "positive",
+      () => {
+        let f = () => 12
+        let result = ResultExn.catchExn(f)
+        let nominal = Ok(12)
+        Assert.deep_equal(result, nominal)
+      },
+    )
+    it(
+      "negative",
+      () => {
+        let f = () => {
+          Js.Exn.raiseError("error")
+        }
+        let result = ResultExn.catchExn(f)
+        Assert.ok(result->ResultExn.isError)
+      },
+    )
+  })
+
+  describe("test catchResult", () => {
+    it(
+      "positive",
+      () => {
+        let f = () => Ok(12)
+        let result = ResultExn.catchResult(f)
+        let nominal = Ok(12)
+        Assert.deep_equal(result, nominal)
+      },
+    )
+    it(
+      "negative 1",
+      () => {
+        let f = () => {
+          Js.Exn.raiseError("error")
+        }
+        let result = ResultExn.catchResult(f)
+        Assert.ok(result->ResultExn.isError)
+      },
+    )
+    it(
+      "negative 1",
+      () => {
+        let f = () => Error(TestExn)
+        let result = ResultExn.catchResult(f)
+        Assert.deep_equal(result->ResultExn.getErr, TestExn)
+      },
+    )
+  })
 })
