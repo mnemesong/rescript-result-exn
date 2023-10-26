@@ -1,0 +1,17 @@
+{
+  "name": "rescript-result-exn",
+  "version": "0.0.1",
+  "description": "provides api for result<'a, exn> type",
+  "scripts": {
+    "res:build": "rescript",
+    "res:dev": "rescript build -w",
+    "test:unit": "mocha ./lib/js/test"
+  },
+  "keywords": [],
+  "author": "Anatoly Starodubtsev",
+  "license": "MIT",
+  "devDependencies": {
+    "rescript": "^10.1.4",
+    "rescript-mocha": "*"
+  }
+}

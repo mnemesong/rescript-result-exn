@@ -1,0 +1,21 @@
+{
+  "name": "rescript-result-exn",
+  "sources": [
+    {
+      "dir": "test",
+      "type": "dev"
+    },
+    {
+      "dir": "src"
+    }
+  ],
+  "package-specs": [
+    {
+      "module": "commonjs"
+    }
+  ],
+  "suffix": ".bs.js",
+  "bs-dev-dependencies": [
+    "rescript-mocha"
+  ]
+}

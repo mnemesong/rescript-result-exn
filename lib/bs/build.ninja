@@ -1,0 +1,24 @@
+rescript = 1
+g_finger := D:\rescript-projects\rescript-result-exn\node_modules\rescript-mocha\lib\ocaml\install.stamp
+rule astj
+  command = "D:\rescript-projects\rescript-result-exn\node_modules\rescript\win32\bsc.exe"  -bs-v 10.1.4  -absname -bs-ast -o $out $i
+o src\ResultExn.ast : astj ..\..\src\ResultExn.res
+rule deps
+  command = "D:\rescript-projects\rescript-result-exn\node_modules\rescript\win32\bsb_helper.exe" -hash 85e8d5fb58cf764569c9b3c06c9d081c $in
+  restat = 1
+o src\ResultExn.d : deps src\ResultExn.ast
+rule mij
+  command = "D:\rescript-projects\rescript-result-exn\node_modules\rescript\win32\bsc.exe" -I src   -bs-package-name rescript-result-exn -bs-package-output commonjs:lib\js\$in_d:.bs.js -bs-v $g_finger $i
+  dyndep = 1
+  restat = 1
+o src\ResultExn.cmj src\ResultExn.cmi ..\js\src\ResultExn.bs.js : mij src\ResultExn.ast
+o test\ResultExnTest.ast : astj ..\..\test\ResultExnTest.res
+rule deps_dev
+  command = "D:\rescript-projects\rescript-result-exn\node_modules\rescript\win32\bsb_helper.exe" -g -hash 85e8d5fb58cf764569c9b3c06c9d081c $in
+  restat = 1
+o test\ResultExnTest.d : deps_dev test\ResultExnTest.ast
+rule mij_dev
+  command = "D:\rescript-projects\rescript-result-exn\node_modules\rescript\win32\bsc.exe" -I test -I src -I "D:\rescript-projects\rescript-result-exn\node_modules\rescript-mocha\lib\ocaml"   -bs-package-name rescript-result-exn -bs-package-output commonjs:lib\js\$in_d:.bs.js -bs-v $g_finger $i
+  dyndep = 1
+  restat = 1
+o test\ResultExnTest.cmj test\ResultExnTest.cmi ..\js\test\ResultExnTest.bs.js : mij_dev test\ResultExnTest.ast
