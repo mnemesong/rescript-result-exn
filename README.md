@@ -111,8 +111,8 @@ let catchResult: (unit => resultexn<'a>) => resultexn<'a>
 
 
 ## License
-MIT
-Uses lot of Belt package of rescript, thats is licensed under LGPL version 3
+- MIT
+- Uses lot of Belt package of rescript, thats is licensed under LGPL version 3
 
 
 ## Author
