@@ -81,6 +81,65 @@ let map4 = (
 @inline
 let mapU = (r: resultexn<'a>, f: (. 'a) => 'b): resultexn<'b> => Result.mapU(r, f)
 
+//Async version of mapU function
+@inline
+let mapUAsync = async (r: resultexn<'a>, f: (. 'a) => promise<'b>): resultexn<'b> =>
+  switch r {
+  | Ok(ok) => Ok(await f(. ok))
+  | Error(e) => Error(e)
+  }
+
+//Async version of map function
+@inline
+let mapAsync = async (r: resultexn<'a>, f: 'a => promise<'b>): resultexn<'b> =>
+  switch r {
+  | Ok(ok) => Ok(await f(ok))
+  | Error(e) => Error(e)
+  }
+
+//Async version of map2 function
+@inline
+let map2Async = async (r1: resultexn<'a>, r2: resultexn<'b>, f: ('a, 'b) => promise<'c>): resultexn<
+  'c,
+> =>
+  switch (r1, r2) {
+  | (Ok(ok1), Ok(ok2)) => Ok(await f(ok1, ok2))
+  | (Error(e), _) => Error(e)
+  | (_, Error(e)) => Error(e)
+  }
+
+//Async version of map3 function
+@inline
+let map3Async = async (
+  r1: resultexn<'a>,
+  r2: resultexn<'b>,
+  r3: resultexn<'c>,
+  f: ('a, 'b, 'c) => promise<'d>,
+): resultexn<'d> =>
+  switch (r1, r2, r3) {
+  | (Ok(ok1), Ok(ok2), Ok(ok3)) => Ok(await f(ok1, ok2, ok3))
+  | (Error(e), _, _) => Error(e)
+  | (_, Error(e), _) => Error(e)
+  | (_, _, Error(e)) => Error(e)
+  }
+
+//Async version of map4 function
+@inline
+let map4Async = async (
+  r1: resultexn<'a>,
+  r2: resultexn<'b>,
+  r3: resultexn<'c>,
+  r4: resultexn<'d>,
+  f: ('a, 'b, 'c, 'd) => promise<'e>,
+): resultexn<'e> =>
+  switch (r1, r2, r3, r4) {
+  | (Ok(ok1), Ok(ok2), Ok(ok3), Ok(ok4)) => Ok(await f(ok1, ok2, ok3, ok4))
+  | (Error(e), _, _, _) => Error(e)
+  | (_, Error(e), _, _) => Error(e)
+  | (_, _, Error(e), _) => Error(e)
+  | (_, _, _, Error(e)) => Error(e)
+  }
+
 //When res is Ok('n), returns f('n). Otherwise, returns res unchanged.
 //Function f takes a value of the same type as 'n and returns a resultexn<'b>
 @inline
@@ -135,6 +194,67 @@ let flatMap4 = (
 @inline
 let flatMapU = (r: resultexn<'a>, f: (. 'a) => resultexn<'b>): resultexn<'b> =>
   Result.flatMapU(r, f)
+
+//Async version of flatMapU function
+@inline
+let flatMapUAsync = async (r: resultexn<'a>, f: (. 'a) => promise<resultexn<'b>>): resultexn<'b> =>
+  switch r {
+  | Ok(ok) => await f(. ok)
+  | Error(e) => Error(e)
+  }
+
+//Async version of flatMap function
+@inline
+let flatMapAsync = async (r: resultexn<'a>, f: 'a => promise<resultexn<'b>>): resultexn<'b> =>
+  switch r {
+  | Ok(ok) => await f(ok)
+  | Error(e) => Error(e)
+  }
+
+//Async version of flatMap2 function
+@inline
+let flatMap2Async = async (
+  r1: resultexn<'a>,
+  r2: resultexn<'b>,
+  f: ('a, 'b) => promise<resultexn<'c>>,
+): resultexn<'c> =>
+  switch (r1, r2) {
+  | (Ok(ok1), Ok(ok2)) => await f(ok1, ok2)
+  | (Error(e), _) => Error(e)
+  | (_, Error(e)) => Error(e)
+  }
+
+//Async version of flatMap3 function
+@inline
+let flatMap3Async = async (
+  r1: resultexn<'a>,
+  r2: resultexn<'b>,
+  r3: resultexn<'c>,
+  f: ('a, 'b, 'c) => promise<resultexn<'d>>,
+): resultexn<'d> =>
+  switch (r1, r2, r3) {
+  | (Ok(ok1), Ok(ok2), Ok(ok3)) => await f(ok1, ok2, ok3)
+  | (Error(e), _, _) => Error(e)
+  | (_, Error(e), _) => Error(e)
+  | (_, _, Error(e)) => Error(e)
+  }
+
+//Async version of flatMap4 function
+@inline
+let flatMap4Async = async (
+  r1: resultexn<'a>,
+  r2: resultexn<'b>,
+  r3: resultexn<'c>,
+  r4: resultexn<'d>,
+  f: ('a, 'b, 'c, 'd) => promise<resultexn<'e>>,
+): resultexn<'e> =>
+  switch (r1, r2, r3, r4) {
+  | (Ok(ok1), Ok(ok2), Ok(ok3), Ok(ok4)) => await f(ok1, ok2, ok3, ok4)
+  | (Error(e), _, _, _) => Error(e)
+  | (_, Error(e), _, _) => Error(e)
+  | (_, _, Error(e), _) => Error(e)
+  | (_, _, _, Error(e)) => Error(e)
+  }
 
 //If res is Ok('n), returns 'n, otherwise default
 @inline
@@ -196,7 +316,7 @@ let errToOption = (r: resultexn<'a>): option<exn> =>
 
 //Exectes the function f: 'a => 'b and catching and wrapping raised errors to Error(exn)
 @inline
-let catchExn = (f: unit => 'a): resultexn<'a> =>
+let tryExec = (f: unit => 'a): resultexn<'a> =>
   switch f() {
   | x => Ok(x)
   | exception e => Error(e)
@@ -204,8 +324,61 @@ let catchExn = (f: unit => 'a): resultexn<'a> =>
 
 //Exectes the function f: 'a => result<'b, exn> and catching and wrapping raised errors to Error(exn)
 @inline
-let catchResult = (f: unit => resultexn<'a>): resultexn<'a> =>
+let tryExecFlat = (f: unit => resultexn<'a>): resultexn<'a> =>
   switch f() {
   | x => x
+  | exception e => Error(e)
+  }
+
+//Promise will return result<'a, exn> where exn is catched exception
+@inline
+let thenTry = async (p: promise<'a>): resultexn<'a> =>
+  switch await p {
+  | x => Ok(x)
+  | exception e => Error(e)
+  }
+
+//Catches extra exceptions, which will happens at promise<result<'a, exn>> execution
+@inline
+let thenTryFlat = async (p: promise<resultexn<'a>>): resultexn<'a> =>
+  switch await p {
+  | x => x
+  | exception e => Error(e)
+  }
+
+//Converts promise<result<'a, exn>> with throwable function and catch exception into Error
+@inline
+let thenTryMap = async (p: promise<resultexn<'a>>, f: 'a => 'b): resultexn<'b> =>
+  switch await p {
+  | x => Result.flatMap(x, x => tryExec(() => f(x)))
+  | exception e => Error(e)
+  }
+
+//Converts promise<result<'a, exn>> with throwable resulting function and catch exception into Error
+@inline
+let thenTryFlatMap = async (p: promise<resultexn<'a>>, f: 'a => resultexn<'b>): resultexn<'b> =>
+  switch await p {
+  | x => Result.flatMap(x, x => tryExecFlat(() => f(x)))
+  | exception e => Error(e)
+  }
+
+//Chains promise<result<'a, exn>> with 'a => promise<'b> map funciton
+@inline
+let thenTryMapAsync = async (p: promise<resultexn<'a>>, f: 'a => promise<'b>): resultexn<'b> =>
+  switch await p {
+  | Ok(x) => await thenTry(f(x))
+  | Error(e) => Error(e)
+  | exception e => Error(e)
+  }
+
+//Chains promise<result<'a, exn>> with 'a => promise<result<'b, exn>> map funciton
+@inline
+let thenTryFlatMapAsync = async (
+  p: promise<resultexn<'a>>,
+  f: 'a => promise<resultexn<'b>>,
+): resultexn<'b> =>
+  switch await p {
+  | Ok(x) => await thenTryFlat(f(x))
+  | Error(e) => Error(e)
   | exception e => Error(e)
   }
